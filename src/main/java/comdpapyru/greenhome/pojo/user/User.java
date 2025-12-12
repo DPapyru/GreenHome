@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
-@Table(name="greenhome_user") // 映射到数据表
+import comdpapyru.greenhome.pojo.article.Article;
+import java.util.List;
+
+@Table(name = "greenhome_user") // 映射到数据表
 @Entity
 public class User {
     /**
@@ -34,6 +37,19 @@ public class User {
     @Column(name = "email")
     @Email(message = "邮箱格式不正确") // 邮箱格式
     private String email;
+
+    /**
+     * 用户的邀请码
+     */
+    @Column(name = "inv_code")
+    @NotEmpty(message = "邀请码不能为空")
+    private String inv_code;
+    
+    /**
+     * 用户的文章列表
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Article> articles;
 
     public Integer getUserID() {
         return userID;
@@ -67,13 +83,24 @@ public class User {
         this.email = email;
     }
 
+    public String getInv_code() {
+        return inv_code;
+    }
+
+    public void setInv_code(String inv_code) {
+        this.inv_code = inv_code;
+    }
+    
+    public List<Article> getArticles() {
+        return articles;
+    }
+    
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+    }
+
     @Override
     public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "User{" + "userID=" + userID + ", userName='" + userName + '\'' + ", password='" + password + '\'' + ", email='" + email + '\'' + ", inv_code='" + inv_code + '\'' + '}';
     }
 }

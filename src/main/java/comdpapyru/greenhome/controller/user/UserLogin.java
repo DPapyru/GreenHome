@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController // 返回对象 转换为json文本
 @RequestMapping("/login") // 通过路径访问这个类的功能（例如 localhost:8088/login/***）
-public class UserLogin {
+public class UserLogin implements IBasicController {
     @Autowired
     IUserService userService;
 
