@@ -1,10 +1,13 @@
 package comdpapyru.greenhome.pojo.user.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public class UserDto {
     private Integer userID;
     private String userName;
     private String password;
     private String email;
+    @NotEmpty(message = "邀请码不能为空")
     private String inv_code;
 
     public String getInv_code() {

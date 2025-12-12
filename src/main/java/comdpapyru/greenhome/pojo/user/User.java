@@ -27,10 +27,17 @@ public class User {
     /**
      * 用户密码
      */
-    @Column(name = "password")
+    @Column(name = "password", columnDefinition = "VARCHAR(100)")
     @NotEmpty(message = "密码不能为空") // 密码不能为空
-    @Length(min = 6, max = 20, message = "密码长度必须在6-20之间")
+    @Length(min = 6, max = 100, message = "密码长度必须在6-100之间")
     private String password;
+
+    /**
+     * 密码盐值
+     */
+    @Column(name = "password_salt")
+    private String passwordSalt;
+
     /**
      * 用户邮箱
      */
@@ -42,9 +49,15 @@ public class User {
      * 用户的邀请码
      */
     @Column(name = "inv_code")
-    @NotEmpty(message = "邀请码不能为空")
     private String inv_code;
     
+    /**
+     * 用户角色
+     */
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER; // 默认为普通用户
+
     /**
      * 用户的文章列表
      */
@@ -75,6 +88,14 @@ public class User {
         this.password = password;
     }
 
+    public String getPasswordSalt() {
+        return passwordSalt;
+    }
+
+    public void setPasswordSalt(String passwordSalt) {
+        this.passwordSalt = passwordSalt;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -99,8 +120,16 @@ public class User {
         this.articles = articles;
     }
 
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", userName='" + userName + '\'' + ", password='" + password + '\'' + ", email='" + email + '\'' + ", inv_code='" + inv_code + '\'' + '}';
+        return "User{" + "userID=" + userID + ", userName='" + userName + '\'' + ", password='" + password + '\'' + ", email='" + email + '\'' + ", inv_code='" + inv_code + '\'' + ", role=" + role + '}';
     }
 }

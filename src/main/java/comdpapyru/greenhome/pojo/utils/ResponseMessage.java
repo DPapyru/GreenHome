@@ -41,8 +41,14 @@ public class ResponseMessage<T> {
     public static <T> ResponseMessage<T> success(T data) {
         return new ResponseMessage<>(HttpStatus.OK.value(), "连接成功", data);
     }
+    public static <T> ResponseMessage<T> success(String message, T data) {
+        return new ResponseMessage<>(HttpStatus.OK.value(), message, data);
+    }
     public static <T> ResponseMessage<T> error(Integer code, String message) {
         return new ResponseMessage<>(code, message, null);
+    }
+    public static <T> ResponseMessage<T> error(String message) {
+        return new ResponseMessage<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
     }
 
     @Override

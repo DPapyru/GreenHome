@@ -51,7 +51,7 @@ public class UserService implements IUserService {
      * @param userPojo 用户的POJO对象
      * @return 保存后的用户
      */
-    private User add_getUser(User userPojo) throws SpawnInvCodeException, NewUserException {
+    public User add_getUser(User userPojo) throws SpawnInvCodeException, NewUserException {
         // 检查输入的用户的邀请码是否存在的
         var invCode = userPojo.getInv_code();
         var checkUser = checkUserInvCode(invCode);
@@ -89,6 +89,11 @@ public class UserService implements IUserService {
                 continue;
             }
 
+            // 跳过已使用的邀请码
+            if(user.getInv_code().startsWith("USED-")){
+                continue;
+            }
+
             if (user.getInv_code().equals(invCode)) {
                 return user;
             }
@@ -104,9 +109,9 @@ public class UserService implements IUserService {
         var userOptional = userRepository.findById(user.getUserID()); // 通过用户ID获取
         if (userOptional.isPresent()) {
             User updateUser = userOptional.get();
-            updateUser.setInv_code(null); // 将邀请码设置为null，表示已使用
+            updateUser.setInv_code("USED-" + System.currentTimeMillis()); // 标记为已使用，避免null约束问题
             userRepository.save(updateUser); // 保存更新后的用户信息
-            LOGGER.info("用户 {} 的邀请码已被移除", user.getUserID());
+            LOGGER.info("用户 {} 的邀请码已被使用", user.getUserID());
         } else {
             LOGGER.warn("尝试移除不存在的用户邀请码，用户ID: {}", user.getUserID());
         }
@@ -118,14 +123,19 @@ public class UserService implements IUserService {
     private String spawnUserInvCode() throws SpawnInvCodeException{
         Random random = new Random();
         try {
+            // 生成10个字母（大小写混合）
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
             for (int i = 0; i < 10; i++) {
-                char c = (char) (random.nextInt(52) + 'a'); // 范围 a-zA-Z
-                STRING_BUFFER.append(c); // 添加字符
+                int randomIndex = random.nextInt(chars.length());
+                STRING_BUFFER.append(chars.charAt(randomIndex));
             }
+
             STRING_BUFFER.append("-"); // 连接符
-            for(int i = 0;i<15;i++){
-                char c = (char) (random.nextInt(10) + '0'); // 范围 0-9
-                STRING_BUFFER.append(c);
+
+            // 生成15个数字
+            for(int i = 0; i < 15; i++){
+                int digit = random.nextInt(10);
+                STRING_BUFFER.append(digit);
             }
 
             var invCode = STRING_BUFFER.toString();
